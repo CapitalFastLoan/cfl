@@ -1,0 +1,11 @@
+const express = require("express");
+const router = express.Router();
+const { validateSignup, validateLogin,validateUserExists } = require("./requestValidator");
+const { validateToken } = require("./middlewares");
+const { signup, login, profile,isUserExists } = require("./controllers/authController");
+router.post('/isUserExists',validateUserExists,isUserExists);
+router.post("/signup", validateSignup, signup);
+router.post("/login", validateLogin, login);
+router.get("/profile", validateToken, profile);
+router.use((req, res) => res.status(404).json({ error: "Url not found" }));
+module.exports = router;
