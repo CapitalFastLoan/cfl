@@ -1,5 +1,5 @@
 const { body } = require("express-validator");
-const User = require("./models/User");
+const User = require("../models/User");
 
 const validateSignup = [
   body("name")
@@ -85,4 +85,6 @@ const validateUserExists = [
     .isMobilePhone()
     .withMessage("Mobile number is invalid"),
 ];
+
+
 module.exports = { validateSignup, validateLogin,validateUserExists };
