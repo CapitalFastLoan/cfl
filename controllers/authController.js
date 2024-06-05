@@ -54,6 +54,7 @@ const login = async (req, res) => {
       const User = new Usermodel(user);
       const isPasswordmatch = await User.validatePassword(password);
       if (isPasswordmatch) {
+        
         const payload = { id: user.id, email: user.email, mobile: user.mobile };
         const authtoken = genrateToken(payload);
         return res

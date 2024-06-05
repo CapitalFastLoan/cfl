@@ -88,3 +88,4 @@ const validateUserExists = [
 
 
 module.exports = { validateSignup, validateLogin,validateUserExists };
+

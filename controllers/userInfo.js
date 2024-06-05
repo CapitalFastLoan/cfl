@@ -3,6 +3,7 @@ const { validationResult } = require("express-validator");
 const saveAddress = async (req, res) => {
   try {
   const { user } = req;
+  
   const userId = user._id;
   const addresses = await Address.find({ userId: userId });
     if (addresses.length) {

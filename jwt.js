@@ -13,3 +13,4 @@ const decodeToken = async (token) => {
   }
 };
 module.exports = { genrateToken,decodeToken };
+
