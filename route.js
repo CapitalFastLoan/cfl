@@ -6,11 +6,11 @@ const {
   validateSignup,
   validateLogin,
   validateUserExists,
-} = require("./requestValidators/authValidators");
+} = require("./requestvalidators/authValidators");
 
 const {
   validateAddress,
-} = require("./requestValidators/userInfo");
+} = require("./requestvalidators/userInfo");
 
 // Import middlewares
 const { validateToken } = require("./middlewares");
