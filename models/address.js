@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const pincodeValidator = {
-  
   validator: function(v) {
     return /^\d{6}$/.test(v); // Regular expression to match exactly 6 digits
   },

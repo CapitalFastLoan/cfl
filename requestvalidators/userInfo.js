@@ -41,4 +41,3 @@ const validateAddress = [
   }),
 ];
 module.exports = { validateAddress };
-

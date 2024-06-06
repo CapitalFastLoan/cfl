@@ -1,3 +1,4 @@
+
 const Usermodel = require("../models/User");
 const { validationResult } = require("express-validator");
 const { genrateToken } = require("../jwt");
