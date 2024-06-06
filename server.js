@@ -9,7 +9,7 @@ const uri = process.env.URI;
 const { db, mongoose } = require("./db");
 db(uri).then(() => {
   app.listen(port, () => {
-    console.log(`Congrats dev your app is runing ${port}`);
+    console.log(`Congrats dev your app is running ${port}`);
   });
 });
 const route = require("./route");

@@ -9,3 +9,4 @@ const db = async (uri) => {
     }
 };
 module.exports = {db,mongoose};
+
