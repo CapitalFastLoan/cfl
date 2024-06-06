@@ -4,7 +4,7 @@ const {
   validateSignup,
   validateLogin,
   validateUserExists,
-} = require("./requestValidators/authValidators");
+} = require("./requestvalidators/authValidators");
 const { validateToken } = require("./middlewares");
 const {
     validateAddress
