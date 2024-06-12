@@ -1,5 +1,7 @@
 const { decodeToken } = require("./jwt");
 const UserModel = require("./models/User");
+const AddressModel = require("./models/address");
+const OccupationModel = require("./models/OccupationInfo");
 const cacheUserdata = {};
 
 const validateToken = async (req, res, next) => {
@@ -11,19 +13,31 @@ const validateToken = async (req, res, next) => {
     const token = authorization.split(" ")[1];
     const tokenDecoded = await decodeToken(token);
     if (!tokenDecoded) {
-      return res.status(401).json({ message: "Unauthorized Request" });
+      return res.status(401).json({ message: "Session timed out." });
     }
     const { id: userId } = tokenDecoded;
     let user = cacheUserdata[userId];
-
+    let result;
     if (!user) {
-        user = await UserModel.findById(userId).select('-hash -salt');
+      user = await UserModel.findById(userId).select("-hash -salt");
       if (!user) {
         return res.status(401).json({ message: "Unauthorized Request" });
       }
-      cacheUserdata[userId] = user;
+      const address = await AddressModel.findOne({ userId: user._id });
+      const occupationInfo = await OccupationModel.findOne({
+        userId: user._id,
+      });
+
+      result = {
+        ...user.toObject(),
+        address: address ? address.toObject() : null,
+        occupation: occupationInfo ? occupationInfo.toObject() : null,
+      };
+      cacheUserdata[userId] = result;
+    } else {
+      result = user;
     }
-    req.user = user;
+    req.user = result;
     next();
   } catch (error) {
     console.error(error);
@@ -31,4 +45,4 @@ const validateToken = async (req, res, next) => {
   }
 };
 
-module.exports = {validateToken};
+module.exports = { validateToken, cacheUserdata };

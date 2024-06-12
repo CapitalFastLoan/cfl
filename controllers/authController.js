@@ -1,7 +1,11 @@
 
 const Usermodel = require("../models/User");
+const OccupationModel = require("../models/OccupationInfo");
+const AddressModel = require("../models/address");
 const { validationResult } = require("express-validator");
 const { genrateToken } = require("../jwt");
+const {cacheUserdata} = require('../middlewares'); 
+
 const signup = async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -58,9 +62,21 @@ const login = async (req, res) => {
         
         const payload = { id: user.id, email: user.email, mobile: user.mobile };
         const authtoken = genrateToken(payload);
+        const address = await AddressModel.findOne({ userId: user._id });
+        const occupationInfo = await OccupationModel.findOne({
+          userId: user._id,
+        });
+
+       let result = {
+          ...user.toObject(),
+          address: address ? address.toObject() : null,
+          occupation: occupationInfo ? occupationInfo.toObject() : null,
+        };
+        delete result.hash;
+        delete result.salt;
         return res
           .status(200)
-          .json({ message: "Signin successful.", authtoken: authtoken });
+          .json({ message: "Signin successful.", authtoken: authtoken,data:result });
       }
     }
     return res.status(401).json({ message: "Inavalid credentials" });

@@ -1,7 +1,8 @@
 const express = require("express"),
-  router = express.Router();
-
-
+  router = express.Router(),
+  path = require('path');
+/* Setting public directory for images */
+  router.use(express.static(path.join(__dirname, './uploads/')));
 const {
   validateSignup,
   validateLogin,
@@ -10,7 +11,8 @@ const {
 
 const {
   validateAddress,
-  occupationValidationRules
+  occupationValidationRules,
+  profilepicValidator
 } = require("./requestvalidators/userInfo");
 
 
@@ -23,10 +25,8 @@ const {
   profile,
   isUserExists,
 } = require("./controllers/authController");
-
 const {uploadFile} = require('./controllers/uploadFile');
-const { saveAddress, saveoccupation } = require("./controllers/userInfo");
-
+const { saveAddress, saveoccupation,saveUserProfilePic } = require("./controllers/userInfo");
 // Define routes
 router.post("/isUserExists", validateUserExists, isUserExists);
 router.post("/signup", validateSignup, signup);
@@ -41,6 +41,7 @@ router.post(
   saveoccupation
 );
 
+router.post('/updateProfileImage',validateToken,profilepicValidator,saveUserProfilePic)
 
 // 404 error handler (ensure this is the last route)
 router.use((req, res) => res.status(404).json({ error: "Url not found" }));

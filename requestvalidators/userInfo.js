@@ -76,4 +76,7 @@ const occupationValidationRules = [
   }),
 ];
 
-module.exports = { validateAddress,occupationValidationRules };
+const profilepicValidator = [
+  body("profilepic").notEmpty().withMessage("Profile picture is required"),
+];
+module.exports = { validateAddress,occupationValidationRules,profilepicValidator };

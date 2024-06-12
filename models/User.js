@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const crypto = require("crypto");
+const { type } = require("os");
 const UserSchema = mongoose.Schema(
   {
     name: {
@@ -50,6 +51,10 @@ const UserSchema = mongoose.Schema(
       type: String,
       enum: ["customer", "admin","employee"],
       default: "customer",
+    },
+    profilepic:{
+      type:String,
+      required:false
     },
     hash: String,
     salt: String,
