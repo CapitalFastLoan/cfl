@@ -1,6 +1,8 @@
 const Address = require("../models/address");
 const { validationResult } = require("express-validator");
 const OccupationInfo = require("../models/OccupationInfo");
+const User = require('../models/User');
+const { cacheUserdata } = require("../middlewares");
 const saveAddress = async (req, res) => {
   try {
     const { user } = req;
@@ -10,7 +12,7 @@ const saveAddress = async (req, res) => {
     if (addresses.length) {
       return res
         .status(400)
-        .send({ message: "Address exists for this user.." });
+        .send({ message: "Address details exists for this user.." });
     }
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -36,6 +38,7 @@ const saveAddress = async (req, res) => {
       userId,
     });
     await address.save();
+    cacheUserdata[userId].address = address;
     return res
       .status(200)
       .json({ message: "Address details saved successfully." });
@@ -53,6 +56,15 @@ const saveoccupation = async (req, res) => {
     }
 
     const { user } = req;
+
+    const userId = user._id;
+    const occupationInfo = await OccupationInfo.find({ userId: userId });
+    if (occupationInfo.length) {
+      return res
+        .status(400)
+        .send({ message: "Occupation details exists for this user.." });
+    }
+
     const { ...info } = req.body;
     let occupationInfoData;
     if (user.occupation_status === "business") {
@@ -78,6 +90,7 @@ const saveoccupation = async (req, res) => {
     }
     const savedInfo = await new OccupationInfo(occupationInfoData);
     await savedInfo.save();
+    cacheUserdata[user._id].occupation = savedInfo;
     return res
       .status(200)
       .send({ message: "Information saved successfully", data: savedInfo });
@@ -87,4 +100,29 @@ const saveoccupation = async (req, res) => {
   }
 };
 
-module.exports = { saveAddress, saveoccupation };
+const saveUserProfilePic = async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const { user } = req;
+    const userId = user._id;
+    const { profilepic } = req.body;
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { profilepic: profilepic },
+      { new: true } // return the updated document
+    );
+
+    if (!updatedUser) {
+      return res.status(404).send('User not found');
+    }
+    cacheUserdata[user._id].profilepic = profilepic;
+    return res.status(200).json({ data:cacheUserdata[user._id]});
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Something went wrong." });
+  }
+};
+module.exports = { saveAddress, saveoccupation,saveUserProfilePic };

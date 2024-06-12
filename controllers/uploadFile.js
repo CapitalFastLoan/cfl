@@ -45,7 +45,7 @@ const uploadFile = async (req, res) => {
       if (err) {
         return res.status(400).json({ message: err });
       }
-      const filePath = path.join("uploads", req.file.filename).replace(/\\/g, '/');
+      const filePath = req.file.filename;
       return res.status(200).json({ message: "File uploaded successfully", filePath: filePath });
     });
   } catch (error) {
