@@ -29,23 +29,27 @@ const UserSchema = mongoose.Schema(
     marital_status: {
       
         type: String,
-        enum: ["single", "married"],
+        enum: ["single", "married","divorced","widower"],
         required: true,
+    },
+    spouse:{
+      type: String,
+      required:false
     },
     qualification_status: {
         type: String,
-        enum: ["graduate", "non graduate"],
+        enum: ["graduate", "non graduate","10th pass or less","8th pass or less"],
         required: true,
     },
     occupation_status: {
         type: String,
-        enum: ["business", "salaried"],
+        enum: ["business", "salaried","student"],
         required: true,
     },
     gender: {
       type: String,
       enum: ["male", "female", "other"],
-      required: false,
+      required: true,
     },
     role: {
       type: String,

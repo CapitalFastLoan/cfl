@@ -18,6 +18,7 @@ const signup = async (req, res) => {
       email,
       mobile,
       dob,
+      spouse,
       father_name,
       marital_status,
       qualification_status,
@@ -31,6 +32,7 @@ const signup = async (req, res) => {
       dob,
       father_name,
       marital_status,
+      spouse,
       qualification_status,
       occupation_status,
     });

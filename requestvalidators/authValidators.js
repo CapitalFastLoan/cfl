@@ -39,18 +39,27 @@ const validateSignup = [
     .notEmpty()
     .withMessage("Father name is required"),
   body("marital_status")
-    .isIn(["single", "married"])
-    .withMessage("Marital status must be single or married")
+    .isIn(["single", "married","divorced","widower"])
+    .withMessage("Marital status must be single/married/divorced or widower.")
     .notEmpty()
     .withMessage("Marital status is required"),
+    body("marital_status").custom((value, { req }) => {
+      if (value === "married") {
+        if (!req.body.spouse) {
+          throw new Error("Spouse name is required when marital status is married");
+        }
+        return true;
+      }
+      return true;
+    }),
   body("qualification_status")
-    .isIn(["graduate", "non graduate"])
+    .isIn(["graduate", "non graduate","10th pass or less","8th pass or less"])
     .withMessage("Qualification status must be graduate or non graduate")
     .notEmpty()
     .withMessage("Qualification status is required"),
   body("occupation_status")
-    .isIn(["business", "salaried"])
-    .withMessage("Occupation status must be business or salaried")
+    .isIn(["business", "salaried","student"])
+    .withMessage("Occupation status must be business or salaried or student.")
     .notEmpty()
     .withMessage("Occupation status is required"),
   body("gender")
