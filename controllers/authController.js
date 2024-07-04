@@ -23,6 +23,7 @@ const signup = async (req, res) => {
       marital_status,
       qualification_status,
       occupation_status,
+      gender,
       password,
     } = req.body;
     const user = new Usermodel({
@@ -35,6 +36,7 @@ const signup = async (req, res) => {
       spouse,
       qualification_status,
       occupation_status,
+      gender
     });
     user.setPassword(password);
     await user.save();

@@ -63,9 +63,10 @@ const validateSignup = [
     .notEmpty()
     .withMessage("Occupation status is required"),
   body("gender")
-    .optional()
     .isIn(["male", "female", "other"])
-    .withMessage("Gender must be male, female, or other"),
+    .withMessage("Gender must be male, female, or other")
+    .notEmpty()
+    .withMessage("Qualification status is required"),
   body("role")
     .optional()
     .isIn(["customer", "admin", "employee"])
