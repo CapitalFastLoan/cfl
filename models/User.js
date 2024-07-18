@@ -2,7 +2,23 @@ const mongoose = require("mongoose");
 
 const crypto = require("crypto");
 const { type } = require("os");
-const UserSchema = mongoose.Schema(
+
+const ContactSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true
+  },
+  relation: {
+    type: String,
+    required: true
+  },
+  phone: {
+    type: String,
+    required: true
+  }
+});
+
+const UserSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -60,6 +76,12 @@ const UserSchema = mongoose.Schema(
       type:String,
       required:false
     },
+    termsandconditions:{
+      type: Boolean,
+      default:false,
+      required:true
+    },
+    emergency_contacts: [ContactSchema],
     hash: String,
     salt: String,
   },
