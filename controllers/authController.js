@@ -5,6 +5,7 @@ const AddressModel = require("../models/address");
 const { validationResult } = require("express-validator");
 const { genrateToken } = require("../jwt");
 const {cacheUserdata} = require('../middlewares'); 
+const { response } = require("express");
 
 const signup = async (req, res) => {
   try {
@@ -100,6 +101,7 @@ const profile = async (req, res) => {
       .status(200)
       .json({ data: user, message: "Data fetched successfully" });
   } catch (error) {
+    console.error(error)
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
@@ -119,4 +121,26 @@ const isUserExists = async (req,res) => {
   }
 }
 
-module.exports = { signup, login,profile,isUserExists };
+const resetPassword = async (req,res)=> {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const {mobile,password} = req.body;
+    const user = await Usermodel.findOne({ mobile });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    user.setPassword(password);
+    await user.save();
+    return res
+    .status(200)
+    .json({ message: "Password reset successfully.. Kindly login to continue"});
+  } catch (error) {
+    console.error(error)
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+module.exports = { signup, login,profile,isUserExists,resetPassword };

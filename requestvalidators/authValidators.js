@@ -39,26 +39,28 @@ const validateSignup = [
     .notEmpty()
     .withMessage("Father name is required"),
   body("marital_status")
-    .isIn(["single", "married","divorced","widower"])
+    .isIn(["single", "married", "divorced", "widower"])
     .withMessage("Marital status must be single/married/divorced or widower.")
     .notEmpty()
     .withMessage("Marital status is required"),
-    body("marital_status").custom((value, { req }) => {
-      if (value === "married") {
-        if (!req.body.spouse) {
-          throw new Error("Spouse name is required when marital status is married");
-        }
-        return true;
+  body("marital_status").custom((value, { req }) => {
+    if (value === "married") {
+      if (!req.body.spouse) {
+        throw new Error(
+          "Spouse name is required when marital status is married"
+        );
       }
       return true;
-    }),
+    }
+    return true;
+  }),
   body("qualification_status")
-    .isIn(["graduate", "non graduate","10th pass or less","8th pass or less"])
+    .isIn(["graduate", "non graduate", "10th pass or less", "8th pass or less"])
     .withMessage("Qualification status must be graduate or non graduate")
     .notEmpty()
     .withMessage("Qualification status is required"),
   body("occupation_status")
-    .isIn(["business", "salaried","student"])
+    .isIn(["business", "salaried", "student"])
     .withMessage("Occupation status must be business or salaried or student.")
     .notEmpty()
     .withMessage("Occupation status is required"),
@@ -95,6 +97,37 @@ const validateUserExists = [
     .withMessage("Mobile number is invalid"),
 ];
 
+const validatePasswordReset = [
+  body("mobile")
+    .isMobilePhone()
+    .withMessage("Mobile number is invalid")
+    .notEmpty()
+    .withMessage("Mobile number is required")
+    .custom(async (value) => {
+      const user = await User.findOne({ mobile: value });
+      if (!user) {
+        return Promise.reject("User not exists");
+      }
+    }),
+  body("password")
+    .isLength({ min: 8 })
+    .withMessage("Password must be at least 8 characters long")
+    .notEmpty()
+    .withMessage("Password is required"),
+  body("confirmPassword")
+    .isString()
+    .withMessage("Confirm password should be a string")
+    .custom((value, { req }) => {
+      if (value !== req.body.password) {
+        throw new Error("Confirm password does not match password.");
+      }
+      return true;
+    }),
+];
 
-module.exports = { validateSignup, validateLogin,validateUserExists };
-
+module.exports = {
+  validateSignup,
+  validateLogin,
+  validateUserExists,
+  validatePasswordReset,
+};
