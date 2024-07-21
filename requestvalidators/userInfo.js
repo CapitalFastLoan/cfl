@@ -172,6 +172,7 @@ const validateContactUs = [
     .isEmail()
     .withMessage("Invalid email format"),
   body("message").trim().notEmpty().withMessage("Message is required"),
+  body("subject").trim().notEmpty().withMessage("Subject is required"),
 ];
 
 module.exports = {
