@@ -9,8 +9,8 @@ const saveMessage = async (req, res) => {
     }
     const { user } = req;
     const userId = user._id;
-    const { name, email, message } = req.body;
-    const savemessage = new ContactUs({ name, email, message, userId });
+    const { name, email, message,subject } = req.body;
+    const savemessage = new ContactUs({ name, email, subject,message, userId });
     await savemessage.save();
     return res
       .status(200)

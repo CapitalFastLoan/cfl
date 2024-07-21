@@ -142,6 +142,7 @@ const saveUserEmegencyContacts = async (req,res) => {
     }
     userData.emergency_contacts = contacts;
     await userData.save();
+    cacheUserdata[userId].emergency_contacts = userData.emergency_contacts;
     return res.status(200).json({ message: 'Contacts updated successfully!' });
   } catch (error) {
     console.error(error);
