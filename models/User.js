@@ -82,6 +82,20 @@ const UserSchema = new mongoose.Schema(
       required:true
     },
     emergency_contacts: [ContactSchema],
+    aadharVerified: {
+      type: Boolean,
+      default: false
+    },
+    aadharNumber: {
+      type: String,
+      unique: true,
+      sparse: true, 
+    },
+    aadharData:{
+      type: mongoose.Schema.Types.Mixed,
+      required:false,
+      default:{}
+    },
     hash: String,
     salt: String,
   },
