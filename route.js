@@ -32,6 +32,11 @@ const {
 const {uploadFile} = require('./controllers/uploadFile');
 const { saveAddress, saveoccupation,saveUserProfilePic,saveUserEmegencyContacts,acceptTandC } = require("./controllers/userInfo");
 const {saveMessage} = require('./controllers/contactuscontroller');
+
+const {requestAadharOtp,verifyAadharOtp} = require('./controllers/aadharController');
+
+const {validateAadharNumber,validateAadharOtpVerify} = require('./requestvalidators/aadharValidators');
+
 // Define routes
 router.post("/isUserExists", validateUserExists, isUserExists);
 router.post("/signup", validateSignup, signup);
@@ -51,6 +56,9 @@ router.post("/accept-terms-conditions",validateToken,acceptTandC);
 router.post("/contact-us",validateToken,validateContactUs,saveMessage);
 router.post('/updateProfileImage',validateToken,profilepicValidator,saveUserProfilePic)
 router.post('/password-reset',validatePasswordReset,resetPassword);
+
+router.post('/aadhar-requestotp',validateToken,validateAadharNumber,requestAadharOtp);
+router.post('/aadhar-verifyotp',validateToken,validateAadharOtpVerify,verifyAadharOtp);
 // 404 error handler (ensure this is the last route)
 router.use((req, res) => res.status(404).json({ error: "Url not found" }));
 
