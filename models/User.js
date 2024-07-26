@@ -96,6 +96,20 @@ const UserSchema = new mongoose.Schema(
       required:false,
       default:{}
     },
+    panVerified: {
+      type: Boolean,
+      default: false
+    },
+    panNumber: {
+      type: String,
+      unique: true,
+      sparse: true, 
+    },
+    panData:{
+      type: mongoose.Schema.Types.Mixed,
+      required:false,
+      default:{}
+    },
     hash: String,
     salt: String,
   },

@@ -19,6 +19,19 @@ const validateAadharOtpVerify = [
   body("requestId").trim().notEmpty().withMessage("Request id required"),
 ];
 
+const validatePanCard = [
+  body("pannumber")
+    .notEmpty()
+    .withMessage("Pan number is required.")
+    .matches(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/).withMessage('Invalid PAN card number format')
+    .custom(async (value) => {
+      const user = await User.findOne({ pannumber: value });
+      if (user) {
+        return Promise.reject("Pan card already registered with us.");
+      }
+    })
+];
 
 
-module.exports = {validateAadharNumber,validateAadharOtpVerify}
+
+module.exports = {validateAadharNumber,validateAadharOtpVerify,validatePanCard}

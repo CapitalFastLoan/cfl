@@ -4,7 +4,7 @@ const { callCurl } = require("../utils/comman");
 const urlBase = `https://api-preproduction.signzy.app/api/v3/`;
 const accessToken = `uhQUjwyUZdeiShzbM3kxgeTgsdMBjzvr`;
 const { cacheUserdata } = require("../middlewares");
-
+const axios = require("axios");
 const requestAadharOtp = async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -104,7 +104,7 @@ const verifyAadharOtp = async (req, res) => {
         return res.status(statusCode).json({ message });
       }
     } catch (error) {
-      return res.status(error).json({ error });
+      return res.status(500).json({ error });
     }
   } catch (error) {
     console.error("Error in requestAadharOtp:", error.message);
@@ -112,4 +112,70 @@ const verifyAadharOtp = async (req, res) => {
   }
 };
 
-module.exports = { requestAadharOtp, verifyAadharOtp };
+const getPanCardDetails = async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { user } = req;
+    if (!user) {
+      return res.status(401).json({ message: "Unauthorized Request" });
+    }
+
+    const userId = user._id;
+    const userdata = await Usermodel.findById(userId);
+    if (!userdata) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const { pannumber } = req.body;
+
+    let requestdata = JSON.stringify({
+      number: pannumber,
+      returnIndividualTaxComplianceInfo: "true",
+    });
+
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: `${urlBase}v3/pan/fetchV2`,
+      headers: {
+        Authorization: `${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      data: requestdata,
+    };
+
+    try {
+      const response = await axios.request(config);
+      const data = response.data;
+      if(data.number){
+        userdata.panVerified = true;
+        userdata.panNumber = data.number;
+        userdata.panData = data;
+        await userdata.save(); 
+        cacheUserdata[userId].panVerified = true;
+        cacheUserdata[userId].panNumber = data.aadhaar_number;
+        cacheUserdata[userId].panData = data;
+        return res.status(200).json({ message:data.message,data: response.data});
+      }else{
+        return res.status(403).json({ message:data.message,data: response.data});
+      }
+    } catch (error) {
+      if (error.response) {
+        const { data, status } = error.response;
+        return res.status(status).json({ message: data.message, data });
+      } else {
+        console.error("Error in Verify Pan:", error.message);
+        return res.status(500).json({ message: "Something went wrong." });
+      }
+    }
+  } catch (error) {
+    console.error("Error in Verify Pan:", error.message);
+    return res.status(500).json({ message: "Something went wrong." });
+  }
+};
+
+module.exports = { requestAadharOtp, verifyAadharOtp, getPanCardDetails };
