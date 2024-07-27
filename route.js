@@ -37,6 +37,10 @@ const {requestAadharOtp,verifyAadharOtp,getPanCardDetails} = require('./controll
 
 const {validateAadharNumber,validateAadharOtpVerify,validatePanCard} = require('./requestvalidators/aadharValidators');
 
+/* Bank Controllers */
+
+const {saveBankAccount,getBankAccounts} = require('./controllers/loanController');
+const {validateBank} = require('./requestvalidators/bankValidators');
 // Define routes
 router.post("/isUserExists", validateUserExists, isUserExists);
 router.post("/signup", validateSignup, signup);
@@ -60,6 +64,12 @@ router.post('/password-reset',validatePasswordReset,resetPassword);
 router.post('/aadhar-requestotp',validateToken,validateAadharNumber,requestAadharOtp);
 router.post('/aadhar-verifyotp',validateToken,validateAadharOtpVerify,verifyAadharOtp);
 router.post('/verify-pancard',validateToken,validatePanCard,getPanCardDetails);
+
+
+/* Loan related routes */
+
+router.post('/add-bank',validateToken,validateBank,saveBankAccount);
+router.get('/user-bank-accounts',validateToken,getBankAccounts)
 // 404 error handler (ensure this is the last route)
 router.use((req, res) => res.status(404).json({ error: "Url not found" }));
 

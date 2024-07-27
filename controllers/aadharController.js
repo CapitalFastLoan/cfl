@@ -130,6 +130,9 @@ const getPanCardDetails = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    if(userdata.panVerified){
+      return res.status(409).json({ message: "You've already verified your pan card details." });
+    }
     const { pannumber } = req.body;
 
     let requestdata = JSON.stringify({
@@ -140,7 +143,7 @@ const getPanCardDetails = async (req, res) => {
     let config = {
       method: "post",
       maxBodyLength: Infinity,
-      url: `${urlBase}v3/pan/fetchV2`,
+      url: `${urlBase}/pan/fetchV2`,
       headers: {
         Authorization: `${accessToken}`,
         "Content-Type": "application/json",
@@ -151,19 +154,20 @@ const getPanCardDetails = async (req, res) => {
     try {
       const response = await axios.request(config);
       const data = response.data;
-      if(data.number){
+      if(data.result.number){
         userdata.panVerified = true;
-        userdata.panNumber = data.number;
-        userdata.panData = data;
+        userdata.panNumber = data.result.number;
+        userdata.panData = data.result;
         await userdata.save(); 
         cacheUserdata[userId].panVerified = true;
-        cacheUserdata[userId].panNumber = data.aadhaar_number;
-        cacheUserdata[userId].panData = data;
+        cacheUserdata[userId].panNumber = data.result.number;
+        cacheUserdata[userId].panData = data.result;
         return res.status(200).json({ message:data.message,data: response.data});
       }else{
         return res.status(403).json({ message:data.message,data: response.data});
       }
     } catch (error) {
+      console.error("Error",error)
       if (error.response) {
         const { data, status } = error.response;
         return res.status(status).json({ message: data.message, data });
