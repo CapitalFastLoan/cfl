@@ -1,7 +1,6 @@
 const axios = require("axios");
 
 const callCurl = async (data, url, auth) => {
-  try {
     const response = await axios.post(url, data, {
       headers: {
         "Content-Type": "application/json",
@@ -9,11 +8,7 @@ const callCurl = async (data, url, auth) => {
       },
       maxBodyLength: Infinity,
     });
-    return response.data;
-  } catch (error) {
-    console.error("error", error);
-    throw new Error(`Error in callCurl: ${error.message}`);
-  }
+    return response.data; 
 };
 
 module.exports = { callCurl };

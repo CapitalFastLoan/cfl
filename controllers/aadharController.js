@@ -35,16 +35,37 @@ const requestAadharOtp = async (req, res) => {
       aadhaarNumber: aadharNumber,
     });
 
-    const { data, statusCode, message, error } = await callCurl(
-      requestdata,
-      apiUrl,
-      accessToken
-    );
+    try {
+      const { data, statusCode, message, error } = await callCurl(
+        requestdata,
+        apiUrl,
+        accessToken
+      );
+    } catch (error) {
+      if (error.response) {
+        return res.status(error.response.status ?? 500).json({
+          message: error.message,
+          status: error.response.status,
+          data: error.response.data,
+        });
+      } else if (error.request) {
+        return res.status(500).json({
+          message: "No response received from server",
+          error: error.request,
+        });
+      } else {
+        return res.status(500).json({
+          message: "Error in setting up request",
+          error: error.message,
+        });
+      }
+    }
+
     if (error) {
       return res.status(error.status).json({ error });
     }
 
-    return res.status(statusCode).json({ message, data });
+    return res.status(200).json({ message, data });
   } catch (error) {
     console.error("Error in requestAadharOtp:", error.message);
     return res.status(500).json({ message: "Something went wrong." });
@@ -104,7 +125,23 @@ const verifyAadharOtp = async (req, res) => {
         return res.status(statusCode).json({ message });
       }
     } catch (error) {
-      return res.status(500).json({ error });
+      if (error.response) {
+        return res.status(error.response.status ?? 500).json({
+          message: error.message,
+          status: error.response.status,
+          data: error.response.data,
+        });
+      } else if (error.request) {
+        return res.status(500).json({
+          message: "No response received from server",
+          error: error.request,
+        });
+      } else {
+        return res.status(500).json({
+          message: "Error in setting up request",
+          error: error.message,
+        });
+      }
     }
   } catch (error) {
     console.error("Error in requestAadharOtp:", error.message);
@@ -130,8 +167,10 @@ const getPanCardDetails = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    if(userdata.panVerified){
-      return res.status(409).json({ message: "You've already verified your pan card details." });
+    if (userdata.panVerified) {
+      return res
+        .status(409)
+        .json({ message: "You've already verified your pan card details." });
     }
     const { pannumber } = req.body;
 
@@ -154,20 +193,24 @@ const getPanCardDetails = async (req, res) => {
     try {
       const response = await axios.request(config);
       const data = response.data;
-      if(data.result.number){
+      if (data.result.number) {
         userdata.panVerified = true;
         userdata.panNumber = data.result.number;
         userdata.panData = data.result;
-        await userdata.save(); 
+        await userdata.save();
         cacheUserdata[userId].panVerified = true;
         cacheUserdata[userId].panNumber = data.result.number;
         cacheUserdata[userId].panData = data.result;
-        return res.status(200).json({ message:data.message,data: response.data});
-      }else{
-        return res.status(403).json({ message:data.message,data: response.data});
+        return res
+          .status(200)
+          .json({ message: data.message, data: response.data });
+      } else {
+        return res
+          .status(403)
+          .json({ message: data.message, data: response.data });
       }
     } catch (error) {
-      console.error("Error",error)
+      console.error("Error", error);
       if (error.response) {
         const { data, status } = error.response;
         return res.status(status).json({ message: data.message, data });
