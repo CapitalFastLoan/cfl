@@ -133,6 +133,7 @@ const verifyAadharOtp = async (req, res) => {
         });
       } else if (error.request) {
         return res.status(500).json({
+          
           message: "No response received from server",
           error: error.request,
         });
