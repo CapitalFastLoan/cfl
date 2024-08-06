@@ -39,7 +39,7 @@ const {validateAadharNumber,validateAadharOtpVerify,validatePanCard} = require('
 
 /* Bank Controllers */
 
-const {saveBankAccount,getBankAccounts} = require('./controllers/loanController');
+const {saveBankAccount,getBankAccounts,getUserLimit} = require('./controllers/loanController');
 const {validateBank} = require('./requestvalidators/bankValidators');
 // Define routes
 router.post("/isUserExists", validateUserExists, isUserExists);
@@ -70,6 +70,7 @@ router.post('/verify-pancard',validateToken,validatePanCard,getPanCardDetails);
 
 router.post('/add-bank',validateToken,validateBank,saveBankAccount);
 router.get('/user-bank-accounts',validateToken,getBankAccounts)
+router.get('/get-loan-limit',validateToken,getUserLimit)
 // 404 error handler (ensure this is the last route)
 router.use((req, res) => res.status(404).json({ error: "Url not found" }));
 

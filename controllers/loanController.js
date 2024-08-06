@@ -74,4 +74,39 @@ const getBankAccounts = async (req, res) => {
   }
 };
 
-module.exports = { saveBankAccount, getBankAccounts };
+const getUserLimit = async (req, res) => {
+  try {
+    const { user } = req;
+    if (!user) {
+      return res.status(401).json({ message: "Unauthorized Request" });
+    }
+    const userId = user._id;
+    return res
+      .status(200)
+      .json({
+        message: "Loan limits fetched",
+        totalLimit: 2000,
+        avaliableLimit: 2000,
+      });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Something went wrong." });
+  }
+};
+
+const requestLoan = async(req,res)=>{
+  try {
+    const { user } = req;
+    if (!user) {
+      return res.status(401).json({ message: "Unauthorized Request" });
+    }
+    const userId = user._id;
+
+    
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Something went wrong." });
+  }
+}
+
+module.exports = { saveBankAccount, getBankAccounts,getUserLimit };
