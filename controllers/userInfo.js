@@ -161,6 +161,7 @@ const acceptTandC = async (req,res) => {
     }
     userData.termsandconditions = accept_terms;
     await userData.save();
+    cacheUserdata[userId].termsandconditions = accept_terms;
     return res.status(200).json({ message: 'Success!' });
   } catch (error) {
     console.error(error);

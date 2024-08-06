@@ -116,10 +116,13 @@ const verifyAadharOtp = async (req, res) => {
         userdata.aadharVerified = true;
         userdata.aadharNumber = data.aadhaar_number;
         userdata.aadharData = data;
+        /* Save users name as aadhar name */
+        userdata.name = data.full_name;
         await userdata.save();
         cacheUserdata[userId].aadharVerified = true;
         cacheUserdata[userId].aadharNumber = data.aadhaar_number;
         cacheUserdata[userId].aadharData = data;
+        cacheUserdata[userId].name = data.full_name;
         return res.status(statusCode).json({ data, message });
       } else {
         return res.status(statusCode).json({ message });
