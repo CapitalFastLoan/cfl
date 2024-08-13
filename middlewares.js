@@ -2,7 +2,7 @@ const { decodeToken } = require("./jwt");
 const UserModel = require("./models/User");
 const AddressModel = require("./models/address");
 const OccupationModel = require("./models/OccupationInfo");
-const cacheUserdata = {};
+let cacheUserdata = {};
 
 const validateToken = async (req, res, next) => {
   try {
@@ -16,6 +16,7 @@ const validateToken = async (req, res, next) => {
       return res.status(401).json({ message: "Session timed out." });
     }
     const { id: userId } = tokenDecoded;
+    cacheUserdata = {};
     let user = cacheUserdata[userId];
     let result;
     if (!user) {
